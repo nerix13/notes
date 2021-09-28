@@ -1,0 +1,262 @@
+/**
+ * @author: Saul Neri
+ */
+
+:root {
+  --background: white;
+  --main-color: white;
+  --text-color: #777777;
+  --main-hover-color: #eeeeee;
+  --main-border-color: gray;
+  --scroll-track: #dedede;
+  --unmarked-icon-color: #dddddd;
+  --marked-icon-color: #555555;
+}
+
+body {
+	background-color: var(--background);
+}
+
+body[data-theme='dark'] {
+  --background: #111111;
+  --main-color: #111111;
+  --text-color: #ffffffee;
+  --main-hover-color: #444444;
+  --main-border-color: #ffffffaa;
+  --scroll-track: black; 
+  --unmarked-icon-color: #555555;
+  --marked-icon-color: white;
+}
+
+.enable-theme-panel {
+  background-color: var(--main-color);
+  padding: 0.50rem 1rem;
+  position: fixed;
+  border: 1px solid var(--main-border-color);
+  border-radius: 10px;
+  z-index: 1001;
+  transition: transform 0.2s;
+  transform: translate(10vw, -160%);
+}
+
+.enable-theme-panel.is-active {
+  transform: translate(10vw, 0.5rem);
+
+}
+
+header {
+  background-color: var(--background);
+  color: var(--text-color);
+  position: sticky;
+  top: 0;
+  text-align: center;
+  font-size: 1rem;
+  font-weight: bold;
+  padding: 0.50rem 0;
+  z-index: 1000;
+  user-select: none;
+}
+
+/*  [ NOTE CARD ]  */
+.note-card {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  border: 1px var(--main-border-color) solid;
+  background-color: var(--main-color);
+  border-radius: 10px;
+  width: 17rem;
+  margin-top: 2rem;
+  word-break: break-all;
+  transition: width 0.4s, height 0.4s;	
+}
+
+.note-card-title {
+  padding-right: 1rem;
+  padding-left: 1rem;
+  text-align: left;
+  color: var(--text-color);
+}
+
+.note-card-desc {
+  padding-right: 1rem;
+  padding-left: 1rem;
+  padding-bottom: 0.5rem;
+  font-size: medium;
+  text-align: left;
+  color: var(--text-color);
+}
+
+.note-card-date {
+  bottom: 0;
+  padding-bottom: 0.5rem;
+  color: #888888;
+}
+
+/*###########################################################*/
+
+
+
+/* [ NOTE CARD BUTTONS ] */
+#note-card-remove-btn {
+  border: 0.1px solid var(--main-color);
+  background-color: var(--main-color);
+  position: relative;
+  border-radius: 50%;
+  margin-top: 0.3rem;
+  height: 2.5rem;
+  width: 2.5rem;
+  left: 9rem;
+}
+
+#note-card-edit-btn {
+  border: 0.1px solid var(--main-color);
+  background-color: var(--main-color);
+  position: relative;
+  margin-top: 0.3rem;
+  border-radius: 50%;
+  height: 2.5rem;
+  width: 2.5rem;
+  left: 2.5rem;
+}
+
+
+#note-card-mark-btn {
+  border: 0.1px solid var(--main-color);
+  background-color: var(--main-color);
+  position: relative;
+  margin-top: 0.3rem;
+  border-radius: 50%;
+  height: 2.5rem;
+  width: 2.5rem;
+  left: -9rem;
+}
+
+
+
+/* [ NODE BUTTONS ICON STYLE ] */
+#note-card-remove-btn i  {
+  color: #777777;
+}
+
+#note-card-edit-btn i {
+  color: #eeeeee;
+}
+
+#mark-btn-icon {
+  color: var(--unmarked-icon-color);
+}
+
+#mark-btn-icon.highlight  { 
+  color: var(--marked-icon-color);
+}
+
+/* [ NOTE CARD BUTTONS ANIMATIONS ] */
+#note-card-remove-btn:hover {
+  background-color: var(--main-hover-color);
+}
+
+#note-card-edit-btn:hover {
+  background-color: var(--main-hover-color);
+}
+
+#note-card-mark-btn:hover {
+  background-color: var(--main-hover-color);
+}
+
+
+/* [ NO NOTES WARNING ] */
+/* body */
+.no-notes-found {
+  margin-top: 3rem;
+  color: #999999;
+}
+
+.no-notes-title {
+  margin-top: 0.5rem;
+}
+
+.no-notes-desc {
+  margin-top: 1.5rem;
+}
+
+/* icon */
+#no-notes-found svg {
+  width: 3.5rem;
+  height: 3.5rem;
+}
+
+
+/* [ SCROLLBAR ] */
+
+@keyframes mouse_over {
+  from {background-color: var(--main-color);}
+  to   {background-color: gray;}
+}
+
+/* ancho */
+
+::-webkit-scrollbar {
+  width: 0.7rem;
+}
+
+/* track */
+::-webkit-scrollbar-track {
+  background-color: var(--scroll-track);
+}
+
+/* handle */
+::-webkit-scrollbar-thumb {
+  background-color: var(--main-color);
+  border: 1px solid var(--scroll-track);
+}
+
+/* al pasar el mouse */
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--main-hover-color);
+  animation-name: mouse_over;
+  animation-duration: 0.3s;
+}
+
+
+/* [ NAV BAR ] */
+
+.nav-bar {
+  border: 1px solid var(--main-border-color);
+  background-color: var(--main-color);
+  list-style-type: none;
+  display: inline-flex;
+  flex-flow: wrap row;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  z-index: 999;
+  position: sticky;
+  margin-top: 0.50rem;
+}
+
+.nav-bar li {
+  transition: background-color 0.2s;
+  padding: 0.50rem;
+  width: 50%;
+}
+
+.nav-bar li:hover {
+  background-color: var(--main-hover-color);
+}
+
+#show-all-notes-btn.is-active {
+  background-color: var(--main-hover-color);
+}
+
+#show-marked-notes-btn.is-active {
+  background-color: var(--main-hover-color);
+}
+
+/* [Media Querys] */
+
+/* mobile sizing */
+@media screen and (orientation: portrait) {
+  .nav-bar {
+	position: fixed;
+	bottom: 0;
+  }
+}
