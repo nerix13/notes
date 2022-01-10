@@ -1,0 +1,111 @@
+/**
+ * @author: Saul Neri
+ */
+:root {
+  --modal-bg-color: rgba(0, 0, 0, 0.75);
+  --modal-color: white;
+  --modal-border: gray;
+  --modal-text-color: #555555;
+  --modal-text-hover-color: #aaaaaa;
+  --text-size: 14px;
+}
+
+/* Style clases */
+
+.rnd-bds { /* rounded borders */
+  border-radius: 5px;
+}
+
+.pntd-bds {
+  border: 1px dashed var(--modal-border);
+}
+
+/* modal colorscheme */
+.modal[data-theme='dark'] {
+  --modal-color: #222222;
+  --modal-border: gray;
+  --modal-text-color: white;
+}
+
+.modal-bg.is-active {
+  background-color: var(--modal-bg-color);
+  transform: translate(0, 0);
+}
+
+/* Modal */
+.modal-bg {
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 999;
+  position: fixed;
+  transition: transform 0.3s, background-color 0.5s;
+  transform: translate(0, 200%);
+  background-color: transparent;
+}
+
+.modal {
+  width: 30vw;
+  border: 1px solid var(--modal-border);
+  background-color: var(--modal-color);
+  padding: 10px 10px;
+  z-index: 6;
+  margin: 2.5% auto;
+  font-size: var(--text-size);
+  color: var(--modal-text-color);
+}
+
+.modal-head {
+  display: flex;
+  justify-content: space-between;
+  flex-flow: row-reverse;
+  font-weight: bold;
+  font-size: x-large;
+  padding-bottom: 5px;
+  border-bottom: 1px solid var(--modal-text-hover-color);
+}
+
+.close-modal-btn {
+  color: var(--modal-text-color);
+  background-color: inherit;
+  transition: color 0.2s;
+  border: none;
+}
+
+.close-modal-btn:hover {
+  color: var(--modal-text-hover-color);
+}
+
+.modal-body {
+  word-wrap: break-word;
+  white-space: break-space;
+  border-bottom: 1px solid var(--modal-text-hover-color);
+  padding: 5px 0;
+}
+
+.modal-footer {
+  margin-top: 5px;
+}
+
+
+/* Mobile devices under 600px width screen */
+@media screen and (max-width: 600px) {
+  .modal {
+	width: 80vw;
+	border: 1px solid var(--modal-border);
+	background-color: var(--modal-color);
+	padding: 10px 10px;
+	z-index: 6;
+	margin: 10% auto;
+  }
+
+  .modal-body {
+	font-size: 16px;
+  }
+}
+
+
+/****************************/
+
+

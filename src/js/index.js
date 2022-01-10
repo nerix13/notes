@@ -1,100 +1,91 @@
-/**
- * @author: Saul Neri
- */
+/** @author: Saul Neri  */
 
-import { updateLimits, clearEntrys, hideButtonSection, showButtonSection, darkMode } from './utils.js';
-import Storage from './Storage.js';
+import NoteStorage from './Storage.js';
 
-const storage = new Storage();
+const db = new NoteStorage();
 
-const $addNoteModal  = document.getElementById('add-note-modal'),
-	  $editNoteModal = document.getElementById('edit-note-modal'),
-	  $noteContainer = document.getElementById('notes-container'),
-	  $showMarkedNotesButton = document.getElementById('show-marked-notes-btn'),
-	  $showAllNotesButton = document.getElementById('show-all-notes-btn'),
-	  $notesMarkedContainer = document.getElementById('notes-marked-container');
+/********/ const $ = id => document.querySelector(id);
+/********/ HTMLElement.prototype.on = function(e, callback) { this.addEventListener(e, callback) };
+/********/ HTMLElement.prototype.attr = function(name) { return this.getAttribute(name) };
+/********/ HTMLElement.prototype.html = function(id) { return this.querySelector(id) };
+/********/ HTMLElement.prototype.show = function() { this.style.display = "block" };
+/********/ HTMLElement.prototype.hide = function() { this.style.display = "none" };
+/********/ HTMLElement.prototype.copy = function() { return this.cloneNode(true) };
+/********/ HTMLElement.prototype.val = function() {return this.value };
 
 document.addEventListener('DOMContentLoaded', () => {
-	if (localStorage.getItem('ask-again') != 'false')
-	  document.querySelector('.enable-theme-panel').classList.toggle('is-active');
-	
-	storage.loadNotes();
-	
-	document.querySelector('.enable-theme-panel').addEventListener('click', e => {
-		if (e.target.matches('.yes-btn')) {
-			darkMode();
-			document.querySelector('.enable-theme-panel').classList.toggle('is-active');
-		}
-		if (e.target.matches('.no-btn')) {
-			document.querySelector('.enable-theme-panel').classList.toggle('is-active');
-		}
-		if (e.target.matches('.dontask-again-btn')) {
-		  localStorage.setItem('ask-again', 'false');
-		  document.querySelector('.enable-theme-panel').classList.toggle('is-active');
-		}
-	});
+  db.reloadStorage();
 });
 
+$('#save-note-form').on('submit', e => {
+  e.preventDefault();
+  let re = /[a-zA-Z0-9*-.,]/g; // do not accept only blanks
+  
+  let valid_title, valid_desc;
 
-// When save_note_btn is pressed... [ New note save operation ]
-$addNoteModal.querySelector('#save-note-btn').onclick = function() { 
-	const note_title =  $addNoteModal.querySelector('#new-note-title').value,
-		  note_desc  =  $addNoteModal.querySelector('#new-note-desc').value;
+  // evaluate note title
+  if (re.test($('#save-note-form').elements["note-title"].value)) {  
+	$('#save-note-form').elements["note-title"].classList.remove('error');
+	$('#save-title-error').style.display = "none";
+	valid_title = true;
+  } else {
+	$('#save-note-form').elements["note-title"].classList.add('error');
+	$('#save-title-error').style.display = "block";
+	valid_title = false;
+  }
 
-	storage.evaluateNote(note_title, note_desc, (title, desc, date) => {
+  // evaluate note description
+  if (re.test($('#save-note-form').elements["note-desc"].value)) {
+	$('#save-note-form').elements["note-desc"].classList.remove('error');
+	$('#save-desc-error').style.display = "none";
+	valid_desc = true;
+  } else {
+	$('#save-note-form').elements["note-desc"].classList.add('error');
+	$('#save-desc-error').style.display = "block";
+	valid_desc = false;
+  }
 
-		const data_obj = {
-			"title":title, 
-			"desc":desc, 
-			"date":date, 
-			"isMarked":false
-		};
-		
-		storage.all_notes.push(data_obj);   // appends the new data obj on 'all_notes' array
-		storage.save();					    // Save the 'all_notes' array and it will be 'Stringified' and loaded on local storage
-		storage.loadNotes();			    // Load all the notes from 'all_notes' array
-		clearEntrys();						// Clear the 'add_note_modal' inputs
-		
-		$('#add-note-modal').modal('hide'); // The modal will be hide
-	});
-};
+  if (valid_title && valid_desc) {
+	const last_pos = db.notes.length; // last position index of DB
 
+	let data = {
+	  id: last_pos,
+	  title: $('#save-note-form').elements["note-title"].val(),
+	  desc: $('#save-note-form').elements["note-desc"].val(),
+	  isMarked: false,
+	};
 
-// When 'edit-note-btn' is pressed... [Edit note operation]
-$editNoteModal.querySelector("#save-changes-btn").onclick = function() {
-	const note_title   = $editNoteModal.querySelector('#edit-note-title').value,
-		  note_desc    = $editNoteModal.querySelector('#edit-note-desc').value,
-		  note_in_edit = parseInt(document.getElementById('note-in-edit').innerHTML); // return the ID 
-	
-	storage.evaluateNote(note_title, note_desc, () => {
-		storage.all_notes[note_in_edit].title = note_title;
-		storage.all_notes[note_in_edit].desc  = note_desc;
-		
-		storage.save();
-		storage.loadNotes();
-		clearEntrys();
+	if ($('#save-note-modal').attr('data-mode') == 'edit') {
+	  const current_id = parseInt((($('#notes').attr('data-note-selected').split('note-')))[1]);
+	  db.editElement(current_id, data);
+	  $('#save-note-modal').setAttribute('data-mode', 'default');
+	} else {
+	  db.saveElement(data);
+	  $('#save-note-form').reset();
+	}
 
-		$('#edit-note-modal').modal('hide'); // The modal will be hide
-	});
-}
+	closeModal('#save-note-modal');
+  }
+});
 
+/* filter buttons */
+$('#show-notes-btn').on('click', () => {
+	document.querySelector('#notes').setAttribute('data-filter', 'default');
+	db.reloadStorage();
+});
 
-/* filters section */
-$showAllNotesButton.onclick = function() {
-  $noteContainer.childNodes.forEach(child => showButtonSection(child));
-  // Show all notes, hide notes marked
-  $noteContainer.style.display = "block";
-  $notesMarkedContainer.style.display = "none";
-  document.body.querySelector('header').innerText = "Notes";
-}
+$('#show-marked-notes-btn').on('click', () => {
+	document.querySelector('#notes').setAttribute('data-filter', 'marked');
+	db.reloadStorage();
+});
 
-$showMarkedNotesButton.onclick = function() {
-  $notesMarkedContainer.childNodes.forEach(child => hideButtonSection(child));
-  // show marked notes, hide all notes
-  $noteContainer.style.display = "none";
-  $notesMarkedContainer.style.display = "block";
-  document.body.querySelector('header').innerText = "Marked Notes";
-}
+/* search input */
+$('#search-input').on('keyup', () => {
+  const pattern = $('#search-input').val();
+  $('#notes').childNodes.forEach(n => {
+	n.html('.note-title').textContent.trim().includes(pattern)
+	  ? n.show()
+	  : n.hide();
+  });
+});
 
-
-updateLimits();

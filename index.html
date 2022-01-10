@@ -1,189 +1,106 @@
 <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<!--[ Bootstrap ]-->
-	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
-	
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
-
 	<link rel="stylesheet" href="src/style/index.css">
-	
-	<!--[ CSS icons ]-->
-	<link href='https://css.gg/more-vertical-alt.css' rel='stylesheet'>
+	<link rel="stylesheet" href="src/style/modal.css">
+	<!--[ CSS ICONS ]-->
 	<link href='https://css.gg/trash-empty.css' rel='stylesheet'>
+	<link href='https://css.gg/math-plus.css' rel='stylesheet'>
 	<link href='https://css.gg/bookmark.css' rel='stylesheet'>
 	<link href='https://css.gg/album.css' rel='stylesheet'>
-	<link href='https://css.gg/notes.css' rel='stylesheet'>  
+	<link href='https://css.gg/notes.css' rel='stylesheet'>
+	<link href='https://css.gg/close.css' rel='stylesheet'>
 	<link href='https://css.gg/pen.css' rel='stylesheet'>
-	
-	<title>Home | Notepad</title>
 
+	<title>My Notes</title>
 </head>
-<body>
-	
-	<header id="app-header">Notes</header>
-	
-	<div class="enable-theme-panel">
-		<p style="color: var(--text-color);">Do you want enable the dark mode?</p>
-		<hr>
-		<div class="options">
-			<button class="btn btn-outline-success yes-btn">Yes</button>
-			<button class="btn btn-outline-danger  no-btn">No</button>
-			<button class="btn btn-outline-secondary dontask-again-btn">Don't ask again</button>
-		</div>
+<body data-theme="light">
+  
+  <nav>
+	<div class="nav-title">My Notes</div>
+	<div class="nav-search">
+	  <input style="padding: 5px 5px;" 
+	  type="search" 
+	  placeholder="Find a note..." 
+	  id="search-input"/>
 	</div>
+  </nav>
 
-	<!--[ Navbar ]-->
-	<ul class="nav-bar">
-		<li id="show-all-notes-btn"><center><i style="color: #777777;" class="gg-notes"></i></center></li>
-		<li id="show-marked-notes-btn"><center><i style="color: #777777;" class="gg-album"></i></center></li>
-	</ul>
-
-  <!--[ NOTE CARD TEMPLATE ]-->
-	<div class="note-card" style="display: none;">
-    <div class="btn-section">
-      <!--[Delete button]-->
-      <button class="btn" id="note-card-remove-btn">
-        <center>
-          <i class="gg-trash-empty"></i>
-        </center>
-      </button>
-
-      <!--[Edit button]-->
-      <button class="btn" id="note-card-edit-btn" data-bs-toggle="modal" data-bs-target="#edit-note-modal">
-        <center>
-  			  <i style="color: #666666;" class="gg-pen"></i>
-        </center>
-      </button>
-
-      <button class="btn" id="note-card-mark-btn">
-        <center>
-		  <i id="mark-btn-icon" class="gg-bookmark"></i>
-        </center>
-      </button>
-    </div>
-    
-    <!--[ NOTE BODY ]-->
-    <h3 class="note-card-title"></h3>
-		<div class="note-card-content">
-			<div class="note-card-desc"></div>
-		</div>
-		<div class="note-card-date"></div>
+  <!--
+  <div class="modal-bg">
+	<div class="modal rnd-bds" id="change-log-modal">
+	  <div class="modal-head">
+		<button class="close-modal-btn" onclick="closeModal('.modal')"><i class="gg-close"></i></button>
+		<div class="modal-title">Welcome to My Notes!</div>
+	  </div>
+	  <div class="modal-body"></div>
 	</div>
-
-
- <center>
-    <!--[ NO NOTES ALERT ]-->
-    <div id="no-notes-found" style="display: none;margin-top: 1rem;color: gray;">
-      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-octagon" viewBox="0 0 16 16">
-        <path d="M4.54.146A.5.5 0 0 1 4.893 0h6.214a.5.5 0 0 1 .353.146l4.394 4.394a.5.5 0 0 1 .146.353v6.214a.5.5 0 0 1-.146.353l-4.394 4.394a.5.5 0 0 1-.353.146H4.893a.5.5 0 0 1-.353-.146L.146 11.46A.5.5 0 0 1 0 11.107V4.893a.5.5 0 0 1 .146-.353L4.54.146zM5.1 1 1 5.1v5.8L5.1 15h5.8l4.1-4.1V5.1L10.9 1H5.1z"/>
-        <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
-      </svg>
-      <h3 class="no-notes-title">No notes found</h3>
-    </div>
-  </center>
-
-
-
-  		<!--[ Notes Containers ]-->
-  <center>
-		<!--[ MARKED NOTES CONTAINER ]-->
-		<div style="display: none;margin-bottom: 3.5rem;" id="notes-marked-container"></div>
-    <!--[ ALL NOTES CONTAINER ]-->
-		<div style="display: block;margin-bottom: 3.5rem;" id="notes-container"></div>
-  </center>
-
-
-
-  <!--[ Add_note_button ]-->
-  <button class="btn" id="add-note-btn" data-bs-toggle="modal" data-bs-target="#add-note-modal" 
-    style="background-color: var(--main-color);position:fixed;top:80%;left:80%;width:3.25rem;height:3.25rem;border:1px solid var(--main-border-color);border-radius: 50%;"
-	>
-		<center>
-			<i style="color: #666666;" class="gg-pen"></i>
-		</center>	
-	</button>
- 
-
-
-
-  <!--[ Add_note_modal ]-->
-  <div class="modal fade" id="add-note-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  	<div class="modal-dialog">
-    	<div class="modal-content">
-      	<div class="modal-header">
-        	<h5 class="modal-title">New note</h5>
-        	<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      	</div>
-      	<div class="modal-body">
-        	<form>
-          	<div class="mb-3">
-            	<label class="col-form-label">Title:</label>
-            	<input maxlength="20" type="text" class="form-control" id="new-note-title">
-            	<label id="title_limiter" style="color: #777777;"></label>
-          	</div>
-          	<div class="mb-3">
-            	<label class="col-form-label">Description:</label>
-            	<textarea maxlength="100" class="form-control" id="new-note-desc"></textarea>
-            	<label id="desc_limiter" style="color: #777777;"></label>
-          	</div>
-        	</form>
-      	</div>
-      		<div class="modal-footer">
-        		<button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
-        		<button type="button" id="save-note-btn" data-toggle="modal" class="btn btn-success">Save note</button>
-      		</div>
-    	</div>
-  	</div>
-	</div>
-
-
-
-	<!--[ Show the id of the note that is in edit ]-->
-	<p style="display: none;" id="note-in-edit">0</p>
-
-
-
-	<!--[ Edit_note_modal ]-->
-	<div class="modal fade" id="edit-note-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Edit note</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <form>
-          <div class="mb-3">
-            <label class="col-form-label">New title:</label>
-            <input maxlength="20" type="text" class="form-control" id="edit-note-title">
-            <label id="title_warn"><p id="edit-title-limiter" style="color: #777777;"></p></label>
-          </div>
-          <div class="mb-3">
-            <label class="col-form-label">New description:</label>
-            <textarea maxlength="100" class="form-control" id="edit-note-desc"></textarea>
-            <label id="desc_warn"><p id="edit-desc-limiter" style="color: #777777;"></p></small></label>
-          </div>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-success" id="save-changes-btn">Save changes</button>
-      </div>
-    </div>
   </div>
-</div>
+  -->
+ 
+  <div class="modal-bg">
+	<div class="modal rnd-bds" id="save-note-modal" data-mode="default">
+	  <div class="modal-head">
+		<button class="close-modal-btn" onclick="closeModal('#save-note-modal')"><i class="gg-close"></i></button>
+		<div class="modal-title">Save note</div>
+	  </div>
+	  <div class="modal-body">
+		<form action="javascript:void(0)" id="save-note-form">
+		  <h3>Title: </h3>
+		  <small id="save-title-error" style="color: red;display: none;">Title must have characters...</small>
+		  <input type="text" id="note-title"
+			onkeyup="updateCounter(this, '#title-counter')" 
+			maxlength="20"
+			placeholder="My note..." 
+			required/>
+		  <span id="title-counter" style="color: --(hover-text-color);">0/20</span>
+		  <h3>Description: </h3>
+		  <small id="save-desc-error" style="color: red;display: none;">Description must have characters...</small>
+		  <textarea id="note-desc" 
+			onkeyup="updateCounter(this, '#desc-counter')" 
+			placeholder="Description's note..." 
+			maxlength="800" 
+			required></textarea>
+		  <span id="desc-counter" style="color: --(hover-text-color);">0/800</span>
+		  <div class="modal-btns">
+			<button class="btn" style="margin: 5px 7px;" type="submit">Save</button>
+			<button class="btn" type="button" style="margin: 5px 0;" onclick="closeModal('#save-note-modal')">Close</button>
+		  </div>
+		</form>
+	  </div>
+	</div>
+  </div>
 
-	<!--[ My_Scripts ]-->
-	<script src="src/js/index.js" type="module"></script>
-  <!--[Bootstrap JavaScript]-->
-	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
-  
+  <div class="note" style="display: none;">
+	<div class="note-head">
+	  <div class="note-title"></div>
+	  <div class="note-options">
+		<button id="mark-note-btn"><i class="gg-bookmark"></i></button>
+		<button id="edit-note-btn"><i class="gg-pen"></i></button>
+		<button id="remove-note-btn"><i class="gg-trash-empty"></i></button>
+	  </div>
+	</div>
+	<div class="note-body"></div>
+  </div>
 
-  <!--[ JQuery ]-->
-  
+  <ul class="notes-filter">
+	<li id="show-notes-btn"><center><i class="gg-notes"></i></center></li>
+	<li id="show-marked-notes-btn"><center><i class="gg-album"></i></center></li>
+  </ul>
+
+  <section id="notes" data-filter="all" data-note-selected=""></section>
+
+  <button id="add-note-btn" onclick="showModal('#save-note-modal')"><i class="gg-math-plus"></i></button>
+
+  <script src="src/js/index.js" type="module"></script>
+  <script>
+	function closeModal(id) {document.querySelector(id).parentNode.classList.remove('is-active');}
+	function showModal(id) {document.querySelector(id).parentNode.classList.toggle('is-active');}
+	// i - input {Input Element}, c - counter { X Element }
+	function updateCounter(i, c) {document.querySelector(c).innerText = `${i.value.length}/${i.getAttribute('maxlength')}`}; 
+  </script>
 </body>
 </html>

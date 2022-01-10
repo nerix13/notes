@@ -1,123 +1,106 @@
-/**
- * @author: Saul Neri
- */ 
+/** @author: Saul Neri */
+import { Note } from './Note.js';
 
-import { updateLimits, parsedDate } from './utils.js';
-import { Note } from './note.js';
+/********/ const $ = id => document.querySelector(id);
+/********/ HTMLElement.prototype.on = function(e, callback) { this.addEventListener(e, callback) };
+/********/ HTMLElement.prototype.attr = function(name) { return this.getAttribute(name) };
+/********/ HTMLElement.prototype.html = function(id) { return this.querySelector(id) };
+/********/ HTMLElement.prototype.show = function() { this.style.display = "block" };
+/********/ HTMLElement.prototype.hide = function() { this.style.display = "none" };
+/********/ HTMLElement.prototype.copy = function() { return this.cloneNode(true) };
 
-export default class Storage {
-	constructor() {
-		this.notes_storage = localStorage.getItem('notes');
-		this.all_notes = JSON.parse(this.notes_storage);
-		this.$notes_container = document.getElementById('notes-container');
-		this.$noNotesAlert = document.getElementById('no-notes-found');   
-		this.$notes_marked_container = document.getElementById('notes-marked-container');
-		
-		if (!this.all_notes || this.notes_storage == null) {
-			localStorage.setItem('notes', JSON.stringify([]));
+export default class NoteStorage {
+  constructor() {
+	this.notesDB = localStorage.getItem('notes-db');
+	this.notes = JSON.parse(this.notesDB);
+	// check if the Database is empty
+	if (!this.notes || this.notesDB == null) {
+	  localStorage.setItem('notes-db', '[]');
+	}
+  }
+
+  reloadStorage() {
+	this.notes = JSON.parse(localStorage.getItem('notes-db'));
+	const $notesContainer = $('#notes');
+
+	$notesContainer.innerHTML = "";
+
+	if (this.notes.length > 0) {
+	  let index_counter = 0;
+	  /* checks the notes filter [MARKED] */
+	  if ($notesContainer.getAttribute("data-filter") == "marked") {
+		const markedNotes = this.notes.filter(n => n.isMarked);
+		if (markedNotes.length > 0) {
+		  markedNotes.forEach(n_data => { // get notes data obj
+			const note = new Note(n_data);
+			n_data.id = index_counter;
+			note.$template.id = `note-${index_counter}`;
+			note.$template.classList.add('is-marked');
+			$notesContainer.appendChild(note.$template);
+			index_counter++;
+		  });
+		} else { /* show dialog */
+		  const $msg = document.createElement('center');
+		  $msg.innerHTML = '<small style="color: var(--text-color);">You have not marked notes...</small>';
+		  $msg.style.margin = "20% auto";
+		  $notesContainer.appendChild($msg);
 		}
+	  } else { /* check the notes filter [NORMAL] */
+		const notes = this.notes;
+		notes.forEach(n_data => {
+		  n_data.id = index_counter;
+		  const note = new Note(n_data); // get notes data obj
+		  if (n_data.isMarked) note.$template.classList.add('is-marked');
+		  note.$template.id = `note-${index_counter}`;
+		  $notesContainer.appendChild(note.$template);
+		  index_counter++;
+		});
+	  }
+	} else { /* show dialog */
+	  console.warn('Notes Storage is empty...');
+	  const $msg = document.createElement('center');
+	  $msg.innerHTML = '<small style="color: var(--text-color);">No notes to show. To make one press + button</small>';
+	  $msg.style.margin = "20% auto";
+	  $notesContainer.appendChild($msg);
 	}
-	
-	reload() {
-		this.save();
-		this.loadNotes();
-	}
+  }
 
-	loadNotes() {
-		const $note_in_edit = document.getElementById('note-in-edit');
-		
-		this.$notes_container.querySelectorAll('*').forEach(note => note.remove()); // clear the note container
-		this.$notes_marked_container.querySelectorAll('*').forEach(note => note.remove()); // clear the note marked ontainer
-		
-		try {
-			if (this.all_notes.length > 0) {
-				this.$noNotesAlert.style.display = "none";
+  toggleMarkElement(index) {
+	this.notes = JSON.parse(localStorage.getItem('notes-db'));
+	const note = this.notes[index];
+	(note.isMarked) ? this.notes[index].isMarked = false : this.notes[index].isMarked = true;
+	this.save();
+  }
 
-				let note_id_counter = 0;  // index of the 'all_notes' array
-				
-				this.all_notes.forEach(n => {
-					let all_right = (n.title && n.desc && n.date);
-				
-					if (all_right) {
-						const note = new Note({
-							title: n.title,
-							desc:  n.desc,
-							date:  n.date,
-							id:    note_id_counter
-						});
-					
-						note.show();
-					
-						if (n.isMarked) {
-							const $note_clon = note.template.cloneNode(true);
-							note.mark();
-							this.$notes_marked_container.appendChild($note_clon);
-						}
-					
-						// [ Note delete button listener ]
-						note.template.querySelector('#note-card-remove-btn').addEventListener('click', () => this.removeNote(note.template, note.id));
-					
-						// [ Note edit button listener ]
-						note.template.querySelector('#note-card-edit-btn').addEventListener('click', () => {
-							$note_in_edit.innerText = `${note.id}`;   // Save the 'note in edit id' in this element
-						
-							// set note.title and note.desc as "edit entrys" value
-							document.getElementById('edit-note-title').value = note.title;  
-							document.getElementById('edit-note-desc').value  = note.desc;
-						
-							updateLimits();
-						});
-					
+  saveElement(note_data) {
+	this.notes = JSON.parse(localStorage.getItem('notes-db'));
+	this.notes.push(note_data);
+	this.save();
+	this.reloadStorage();
+  }
 
-						// [ Note mark button listener ]
-						note.template.querySelector('#note-card-mark-btn').addEventListener('click', () => {
-							// I have a html p element with the ID "note-in-edit" and this element contain the note index (Integer), is used 
-						    // to specify which of the notes have been selected, when this btn detect a click, 
-							// gets the content of the element, and the content is the note number that have been selected.
-							// So... with this "key", we can access to the note and can change this.
+  editElement(index, data) {
+	this.notes = JSON.parse(localStorage.getItem('notes-db'));
+	this.notes[index] = data;
+	this.save();
+	this.reloadStorage();
+  }
 
-							$note_in_edit.innerText = `${note.id}`;	
-							
-							const note_to_mark = parseInt($note_in_edit.innerText),
-								$note_mark_icon = document.querySelector('#note-' + note_to_mark).querySelector('#mark-btn-icon'),
-								note_obj  = this.all_notes[note_to_mark];
-									
-							(note_obj.isMarked) ? this.all_notes[note_to_mark].isMarked = false : this.all_notes[note_to_mark].isMarked = true;
-							$note_mark_icon.classList.toggle('highlight');
-							this.reload();
-						});
+  removeElement(index) {
+	this.notes = JSON.parse(localStorage.getItem('notes-db'));
+	this.notes.splice(index, 1);
+	this.save();
+	this.reloadStorage();
+  }
 
-						this.$notes_container.appendChild(note.template);
-					} 
-					note_id_counter++;
-				});
-			} else { this.$noNotesAlert.style.display = "block" }
-		} catch(e) {window.location.reload()};
-	}
+  save() {
+	localStorage.setItem('notes-db', JSON.stringify(this.notes));
+  }
 
-
-	save() {
-		localStorage.setItem('notes', JSON.stringify(this.all_notes));
-	}
-	
-	
-	removeNote(note_card, note_number_id) {
-		this.all_notes.splice(note_number_id, 1);
-		note_card.remove();
-		this.reload();
-	}
-
-	evaluateNote(note_title, note_desc, callback) {	
-		let title_is_valid = false,
-			desc_is_valid = false,
-			note_date = parsedDate();
-
-		// Evaluate if the inputs isn't empty	
-		if (note_title.trim() != "" && note_desc.trim() != "")
-			title_is_valid = true, desc_is_valid = true;		
-
-		// Evaluate if will be saved or not
-		if (title_is_valid && desc_is_valid)
-			callback(note_title, note_desc, note_date);
-	}
+  /*
+  clearAll() {
+	this.notes = [];
+	this.save();
+  }
+  */
 }

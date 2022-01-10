@@ -1,262 +1,243 @@
-/**
- * @author: Saul Neri
- */
+/* @author: Saul Neri */
 
 :root {
-  --background: white;
+  --hover-text-color-2: #aaaaaa;
+  --note-marked-color: #eeeeee;
+  --hover-text-color: #cccccc;
+  --text-color: #555555;
   --main-color: white;
-  --text-color: #777777;
-  --main-hover-color: #eeeeee;
-  --main-border-color: gray;
-  --scroll-track: #dedede;
-  --unmarked-icon-color: #dddddd;
-  --marked-icon-color: #555555;
 }
 
 body {
-	background-color: var(--background);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
 }
 
-body[data-theme='dark'] {
-  --background: #111111;
-  --main-color: #111111;
-  --text-color: #ffffffee;
-  --main-hover-color: #444444;
-  --main-border-color: #ffffffaa;
-  --scroll-track: black; 
-  --unmarked-icon-color: #555555;
-  --marked-icon-color: white;
-}
-
-.enable-theme-panel {
+nav {
+  border-bottom: 1px solid var(--text-color);
   background-color: var(--main-color);
-  padding: 0.50rem 1rem;
-  position: fixed;
-  border: 1px solid var(--main-border-color);
-  border-radius: 10px;
-  z-index: 1001;
-  transition: transform 0.2s;
-  transform: translate(10vw, -160%);
-}
-
-.enable-theme-panel.is-active {
-  transform: translate(10vw, 0.5rem);
-
-}
-
-header {
-  background-color: var(--background);
   color: var(--text-color);
-  position: sticky;
-  top: 0;
+  padding: 8px 0;
+  display: flex;
+  justify-content: baseline;
+  width: 100vw;
+  z-index: 999;
+  align-items: baseline;
+}
+
+.nav-title {
   text-align: center;
-  font-size: 1rem;
+  padding: 0 10px;
+  width: 10vw;
+  font-style: italic;
   font-weight: bold;
-  padding: 0.50rem 0;
-  z-index: 1000;
-  user-select: none;
 }
 
-/*  [ NOTE CARD ]  */
-.note-card {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  border: 1px var(--main-border-color) solid;
+.nav-search {
+  width: 40vw;
+}
+
+/* input element style */
+input {
+  border: 1.5px solid var(--text-color);
+  background-color: inherit;
+  transition: border 0.3s;
+  color: var(--text-color);
+  padding: 10px 10px;
+  width: 90%;
+  position: relative;
+  margin: 0 auto;
+}
+
+input.error {
+  border: 1px solid #ff2020;
+}
+
+textarea.error {
+  border: 1px solid #ff2020;
+}
+
+textarea {
+  border: 1.5px solid var(--text-color);
+  background-color: inherit;
+  transition: border 0.3s;
+  color: var(--text-color);
+  padding: 10px 10px;
+  width: 90%;
+  position: relative;
+}
+
+.btn {
+  background-color: inherit;
+  border: 1px solid var(--hover-text-color);
+  width: 5.5rem;
+  height: 2.25rem;
+  color: var(--text-color);
+  transition: background-color 0.2s;
+}
+
+.btn:hover {
+  background-color: var(--hover-text-color);
+}
+
+#add-note-btn {
   background-color: var(--main-color);
-  border-radius: 10px;
-  width: 17rem;
-  margin-top: 2rem;
-  word-break: break-all;
-  transition: width 0.4s, height 0.4s;	
-}
-
-.note-card-title {
-  padding-right: 1rem;
-  padding-left: 1rem;
-  text-align: left;
-  color: var(--text-color);
-}
-
-.note-card-desc {
-  padding-right: 1rem;
-  padding-left: 1rem;
-  padding-bottom: 0.5rem;
-  font-size: medium;
-  text-align: left;
-  color: var(--text-color);
-}
-
-.note-card-date {
+  position: fixed;
   bottom: 0;
-  padding-bottom: 0.5rem;
-  color: #888888;
-}
-
-/*###########################################################*/
-
-
-
-/* [ NOTE CARD BUTTONS ] */
-#note-card-remove-btn {
-  border: 0.1px solid var(--main-color);
-  background-color: var(--main-color);
-  position: relative;
+  right: 0;
+  margin-right: 5vw;
+  margin-bottom: 15vh;
+  width: 4rem;
+  height: 4rem;
+  border: 1px solid var(--text-color);
   border-radius: 50%;
-  margin-top: 0.3rem;
-  height: 2.5rem;
-  width: 2.5rem;
-  left: 9rem;
+  color: var(--text-color);
 }
 
-#note-card-edit-btn {
-  border: 0.1px solid var(--main-color);
-  background-color: var(--main-color);
-  position: relative;
-  margin-top: 0.3rem;
-  border-radius: 50%;
-  height: 2.5rem;
-  width: 2.5rem;
-  left: 2.5rem;
+#add-note-btn i {
+  margin: 0 auto; /* positionate in the center of parent node */
+}
+
+#add-note-btn:active {
+  background-color: var(--hover-text-color);
 }
 
 
-#note-card-mark-btn {
-  border: 0.1px solid var(--main-color);
-  background-color: var(--main-color);
-  position: relative;
-  margin-top: 0.3rem;
-  border-radius: 50%;
-  height: 2.5rem;
-  width: 2.5rem;
-  left: -9rem;
+/* modal buttons sections */
+.modal-btns {
+  display: flex;
+  flex-flow: row-reverse nowrap;
 }
 
-
-
-/* [ NODE BUTTONS ICON STYLE ] */
-#note-card-remove-btn i  {
-  color: #777777;
+/* notes container */
+#notes {
+  width: 100vw;
+  height: 30vh;
 }
 
-#note-card-edit-btn i {
-  color: #eeeeee;
+/* note template style */
+.note {
+  border-bottom: 1px solid var(--hover-text-color);
+  transition: background-color 0.3s;
+  color: var(--text-color);
+  padding: 5px 10px;
+  width: 95vw;
 }
 
-#mark-btn-icon {
-  color: var(--unmarked-icon-color);
+.note.is-marked {
+  background-color: var(--note-marked-color);
 }
 
-#mark-btn-icon.highlight  { 
-  color: var(--marked-icon-color);
+.note-head {
+  display: flex;
+  justify-content: space-between;
 }
 
-/* [ NOTE CARD BUTTONS ANIMATIONS ] */
-#note-card-remove-btn:hover {
-  background-color: var(--main-hover-color);
+.note-title {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-style: italic;
+  font-weight: bold;
+  overflow: hidden;
 }
 
-#note-card-edit-btn:hover {
-  background-color: var(--main-hover-color);
+.note-options {
+  display: flex;
+  width: 50%;
+  flex-flow: row-reverse;
+  margin-right: 5px;
 }
 
-#note-card-mark-btn:hover {
-  background-color: var(--main-hover-color);
+/* Note options buttons */
+.note-options button {
+  transition: color 0.3s, margin-bottom 0.2s;
+  background-color: inherit;
+  color: var(--text-color);
+  padding: 5px 10px;
+  margin: 0 12px;
+  border: none;
 }
 
-
-/* [ NO NOTES WARNING ] */
-/* body */
-.no-notes-found {
-  margin-top: 3rem;
-  color: #999999;
+.note-options button:hover {
+  color: var(--hover-text-color);
 }
 
-.no-notes-title {
-  margin-top: 0.5rem;
+.note-body {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;  /*corta el texto y le pone ... al final */
+  padding-top: 2.5px;
+  padding-bottom: 20px;
 }
 
-.no-notes-desc {
-  margin-top: 1.5rem;
-}
-
-/* icon */
-#no-notes-found svg {
-  width: 3.5rem;
-  height: 3.5rem;
-}
+/* this is used when a note is pressed */
+.expand {
+  white-space: normal;
+  text-overflow: auto; /*hace que el texto abarque el espacio que necesita, mostrandose todo...*/
+} 
 
 
-/* [ SCROLLBAR ] */
-
-@keyframes mouse_over {
-  from {background-color: var(--main-color);}
-  to   {background-color: gray;}
-}
-
-/* ancho */
-
-::-webkit-scrollbar {
-  width: 0.7rem;
-}
-
-/* track */
-::-webkit-scrollbar-track {
-  background-color: var(--scroll-track);
-}
-
-/* handle */
-::-webkit-scrollbar-thumb {
-  background-color: var(--main-color);
-  border: 1px solid var(--scroll-track);
-}
-
-/* al pasar el mouse */
-::-webkit-scrollbar-thumb:hover {
-  background-color: var(--main-hover-color);
-  animation-name: mouse_over;
-  animation-duration: 0.3s;
-}
-
-
-/* [ NAV BAR ] */
-
-.nav-bar {
-  border: 1px solid var(--main-border-color);
+/* Notes filters buttons */
+.notes-filter {
+  border-bottom: 1px solid var(--text-color);
   background-color: var(--main-color);
   list-style-type: none;
   display: inline-flex;
-  flex-flow: wrap row;
+  flex-flow: row;
   width: 100%;
   padding: 0;
   margin: 0;
-  z-index: 999;
-  position: sticky;
-  margin-top: 0.50rem;
+  z-index: 998;
 }
 
-.nav-bar li {
+.notes-filter li {
+  color: var(--text-color);
   transition: background-color 0.2s;
   padding: 0.50rem;
   width: 50%;
 }
 
-.nav-bar li:hover {
-  background-color: var(--main-hover-color);
+.notes-filter li:hover {
+  background-color: var(--hover-text-color);
 }
 
-#show-all-notes-btn.is-active {
-  background-color: var(--main-hover-color);
-}
+@media screen and (max-width: 420px) {
+  /* My notes mobile appearance */
+  .note {
+	width: 95vw;
+  }
 
-#show-marked-notes-btn.is-active {
-  background-color: var(--main-hover-color);
-}
+  #notes {
+	width: 100vw;
+  }
 
-/* [Media Querys] */
-
-/* mobile sizing */
-@media screen and (orientation: portrait) {
-  .nav-bar {
+  .notes-filter {
+	border-top: 1px solid var(--text-color);
 	position: fixed;
 	bottom: 0;
   }
+
+  .notes-filter li {
+	padding: 15px 0;
+  }
+
+  nav {
+	padding: 10px 0;
+  }
+
+  .nav-title {
+	text-align: center;
+	padding: 0 20px;
+	width: 20vw;
+	font-style: italic;
+	font-weight: bold;
+  }
+
+  .nav-search {
+	width: 60vw;
+  }
 }
+
+
